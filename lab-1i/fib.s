@@ -8,36 +8,38 @@
 	.global fibonacci
 	.type fibonacci, function
 
-fibonacci:
 	@ ADD/MODIFY CODE BELOW
 	@ PROLOG
-	push {r3, r4, r5, lr}
+fibonacci:
+	push {r1,r2, lr}
+    mov r1,#0
+    mov r2,#1
 
-	@ R4 = R0 - 0 (update flags)
-	@ if(R0 <= 0) goto .L3 (which returns 0)
+loop:
+    @if(n==0) return a
+    cmp r0,#0
+    beq .L3
+    @if(n==1) return b
 
-	@ Compare R4 wtih 1
-	@ If R4 == 1 goto .L4 (which returns 1)
+    cmp r0,#1
+    beq .L4
 
-	@ R0 = R4 - 1
-	@ Recursive call to fibonacci with R4 - 1 as parameter
+    sub r0,r0,#1
+    @swp r1,r2
+    eor r1,r1,r2
+    eor r2,r1,r2
+    eor r1,r1,r2
 
-	@ R5 = R0
-	@ R0 = R4 - 2
-	@ Recursive call to fibonacci with R4 - 2 as parameter
-
-	@ R0 = R5 + R0 (update flags)
-
-	pop {r3, r4, r5, pc}		@EPILOG
-
-	@ END CODE MODIFICATION
+    add r2,r1,r2
+    
+    b loop
 .L3:
-	mov r0, #0			@ R0 = 0
-	pop {r3, r4, r5, pc}		@ EPILOG
+	mov r0, r1			@ R0 = 0
+	pop {r1,r2,pc}
 
 .L4:
-	mov r0, #1			@ R0 = 1
-	pop {r3, r4, r5, pc}		@ EPILOG
+	mov r0, r2			@ R0 = 1
+	pop {r1,r2,pc}
 
 	.size fibonacci, .-fibonacci
 	.end
